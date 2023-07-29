@@ -3,11 +3,11 @@
 ## Steps to set up the initial pipeline:
 1. Install java, zookeeper, and kafka
 **mac with homebrew**
- ```
+```
 $ brew cask install java
 $ brew install zookeeper
 $ brew install kafka
- ```
+```
 2. Start zookeeper
 ```
 $ zookeeper-server-start /usr/local/etc/kafka/zookeeper.properties
