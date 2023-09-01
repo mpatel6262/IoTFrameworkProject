@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from astrapy.rest import create_client, http_methods
 from threading import Thread
 import time
@@ -37,6 +37,10 @@ def poll_cassandra():
 @app.route('/')
 def index():
     return render_template('index.html', response=responseDict)
+
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    return jsonify(responseDict)
 
 if __name__ == '__main__':
     astra_http_client = create_client(astra_database_id=ASTRA_DB_ID,
