@@ -38,7 +38,7 @@ $ kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1
 ```
 $ spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 --master local pySparkJob.py
 ```
-##Note: Make sure to update the REPLACE_ME items in the files
+***Note: Make sure to update the REPLACE_ME items in the files***
 
 ## Optional testing of the PySpark script
 1. Set up a producer that publishes to your first topic
