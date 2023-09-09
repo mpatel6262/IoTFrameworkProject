@@ -7,8 +7,8 @@ spark = SparkSession.builder \
 
 # Step 2: Configure Kafka connection
 kafka_brokers = "localhost:9092"  # Replace with your Kafka broker address
-kafka_input_topic = "input_event"  # Replace with the Kafka topic you want to consume
-kafka_output_topic = "output_event"  # Replace with the Kafka topic where you want to output data
+kafka_input_topic = "REPLACE_ME"  # Replace with the Kafka topic you want to consume
+kafka_output_topic = "REPLACE_ME"  # Replace with the Kafka topic where you want to output data
 
 # Step 3: Define Kafka source for Structured Streaming
 kafkaStream = spark.readStream \
