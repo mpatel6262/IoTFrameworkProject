@@ -1,12 +1,13 @@
 # IoTFrameworkProject
 
 ## Steps to set up the initial pipeline:
-1. Install java, zookeeper, and kafka
+1. Install java, zookeeper, apache-spark and kafka
 **mac with homebrew**
 ```
 $ brew cask install java
 $ brew install zookeeper
 $ brew install Kafka
+$ brew install apache-spark
 ```
 2. Start zookeeper
 ```
