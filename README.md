@@ -31,6 +31,7 @@ $ python3 mqttSubscriberAndKafkaPublisher.py
 ```
 
 ## Setting up PySpark structured streaming:
+***Prerequisite: Set up the SPARK_HOME env variable in .zshrc***
 7. Create another Kafka topic to ingest output events from the PySpark script as done in step 4
 ```
 $ kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic {NAME 2}
