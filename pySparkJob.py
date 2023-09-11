@@ -30,7 +30,7 @@ aggregatedStream = kafkaStream.selectExpr(
 ).groupBy("topic").agg(avg("value").alias("average_value"))
 
 # Step 6: Write the average values to another Kafka topic
-query = aggregatedStream.selectExpr("topic", "cast(average_value as string) as value") \
+query = aggregatedStream.selectExpr("concat(topic, ', ', cast(average_value as string)) as value") \
     .writeStream \
     .outputMode("complete") \
     .format("kafka") \
