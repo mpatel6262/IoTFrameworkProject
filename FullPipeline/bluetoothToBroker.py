@@ -86,21 +86,21 @@ ALL_SENSORTAG_CHARACTERISTIC_UUIDS = """
 00002a2a-0000-1000-8000-00805f9b34fb
 00002a50-0000-1000-8000-00805f9b34fb
 00002a19-0000-1000-8000-00805f9b34fb
-f000aa01-0451-4000-b000-000000000000
-f000aa02-0451-4000-b000-000000000000
-f000aa03-0451-4000-b000-000000000000
-f000aa21-0451-4000-b000-000000000000
-f000aa22-0451-4000-b000-000000000000
-f000aa23-0451-4000-b000-000000000000
-f000aa41-0451-4000-b000-000000000000
-f000aa42-0451-4000-b000-000000000000
-f000aa44-0451-4000-b000-000000000000
-f000aa81-0451-4000-b000-000000000000
-f000aa82-0451-4000-b000-000000000000
-f000aa83-0451-4000-b000-000000000000
-f000aa71-0451-4000-b000-000000000000
-f000aa72-0451-4000-b000-000000000000
-f000aa73-0451-4000-b000-000000000000
+f000aa01-0451-4000-b000-000000000000 //UUID IRT Data
+f000aa02-0451-4000-b000-000000000000 //UUID IRT Configuration
+f000aa03-0451-4000-b000-000000000000 //UUID IRT Period
+f000aa21-0451-4000-b000-000000000000 //UUID HUM Data
+f000aa22-0451-4000-b000-000000000000 //UUID HUM Configuration
+f000aa23-0451-4000-b000-000000000000 //UUID HUM Period
+f000aa41-0451-4000-b000-000000000000 //UUID BAR Data
+f000aa42-0451-4000-b000-000000000000 //UUID BAR Configuration
+f000aa44-0451-4000-b000-000000000000 //UUID BAR Period
+f000aa81-0451-4000-b000-000000000000 //UUID MOV Data
+f000aa82-0451-4000-b000-000000000000 //UUID MOV Configuration
+f000aa83-0451-4000-b000-000000000000 //UUID MOV Period
+f000aa71-0451-4000-b000-000000000000 //UUID OPT Data
+f000aa72-0451-4000-b000-000000000000 //UUID OPT Configuration
+f000aa73-0451-4000-b000-000000000000 //UUID OPT Period
 0000ffe1-0000-1000-8000-00805f9b34fb
 f000aa65-0451-4000-b000-000000000000
 f000aa66-0451-4000-b000-000000000000
@@ -117,6 +117,7 @@ f000ffc4-0451-4000-b000-000000000000
 """
 
 uuid16_lookup = {v: normalize_uuid_16(k) for k, v in uuid16_dict.items()}
+print(uuid16_lookup)
 
 SYSTEM_ID_UUID = uuid16_lookup["System ID"]
 MODEL_NBR_UUID = uuid16_lookup["Model Number String"]
@@ -128,9 +129,19 @@ MANUFACTURER_NAME_UUID = uuid16_lookup["Manufacturer Name String"]
 BATTERY_LEVEL_UUID = uuid16_lookup["Battery Level"]
 KEY_PRESS_UUID = normalize_uuid_16(0xFFE1)
 
-IO_DATA_CHAR_UUID = "f000aa01-0451-4000-b000-000000000000"
-IO_CONFIG_CHAR_UUID = "f000aa02-0451-4000-b000-000000000000"
+IO_DATA_CHAR_UUID = "f000aa65-0451-4000-b000-000000000000"
+IO_CONFIG_CHAR_UUID = "f000aa66-0451-4000-b000-000000000000"
 
+TEMP_DATA_UUID = "f000aa01-0451-4000-b000-000000000000"
+TEMP_CONF_UUID = "f000aa02-0451-4000-b000-000000000000"
+HUM_DATA_UUID = "f000aa21-0451-4000-b000-000000000000"
+HUM_CONF_UUID = "f000aa22-0451-4000-b000-000000000000"
+BAR_DATA_UUID = "f000aa41-0451-4000-b000-000000000000"
+BAR_CONF_UUID = "f000aa42-0451-4000-b000-000000000000"
+MOV_DATA_UUID = "f000aa81-0451-4000-b000-000000000000"
+MOV_CONF_UUID = "f000aa82-0451-4000-b000-000000000000"
+OPT_DATA_UUID = "f000aa71-0451-4000-b000-000000000000"
+OPT_CONF_UUID = "f000aa72-0451-4000-b000-000000000000"
 
 async def main():
     while True:
@@ -143,29 +154,32 @@ async def main():
             async with BleakClient(address, winrt=dict(use_cached_services=True)) as client:
                 system_id = await client.read_gatt_char(SYSTEM_ID_UUID)
                 model_number = await client.read_gatt_char(MODEL_NBR_UUID)
-                device_name = ""
-                try:
-                    device_name = await client.read_gatt_char(DEVICE_NAME_UUID)
-                    print("Device Name: {0}".format("".join(map(chr, device_name))))
-                except Exception:
-                    pass
                 manufacturer_name = await client.read_gatt_char(MANUFACTURER_NAME_UUID)
                 firmware_revision = await client.read_gatt_char(FIRMWARE_REV_UUID)
                 hardware_revision = await client.read_gatt_char(HARDWARE_REV_UUID)
                 software_revision = await client.read_gatt_char(SOFTWARE_REV_UUID)
                 battery_level = await client.read_gatt_char(BATTERY_LEVEL_UUID)
+                write_value = bytearray([0x01])
+                #await client.write_gatt_char(TEMP_CONF_UUID, write_value, response=True)
+                temperature = await client.read_gatt_char(TEMP_DATA_UUID)
+                #await client.write_gatt_char(HUM_CONF_UUID, write_value, response=True)
+                humidity = await client.read_gatt_char(HUM_DATA_UUID)
+                #await client.write_gatt_char(BAR_CONF_UUID, write_value, response=True)
+                pressure = await client.read_gatt_char(BAR_DATA_UUID)
+                #await client.write_gatt_char(OPT_CONF_UUID, write_value, response=True)
+                light = await client.read_gatt_char(OPT_DATA_UUID)
+
                 
                 sensorTag = {
                     "system_id":  ":".join(["{:02x}".format(x) for x in system_id[::-1]]),
                     "model_number": "".join(map(chr, model_number)),
-                    "device_name": "".join(map(chr, device_name)),
-                    "manufacturer_name": "".join(map(chr, manufacturer_name)),
-                    "firmware_revision": "".join(map(chr, firmware_revision)),
-                    "hardware_revision": "".join(map(chr, hardware_revision)),
-                    "software_revision": "".join(map(chr, software_revision)),
-                    "battery_level": "{0}%".format(int(battery_level[0]))
+                    "battery_level": "{0} %".format(int(battery_level[0])),
+                    "ambient_temperature": "{0} deg".format(int.from_bytes(temperature, "big")),
+                    "humidity": "{0} %rH".format(int.from_bytes(humidity, "big")),
+                    "pressure": "{0} mbar".format(int.from_bytes(pressure, "big")),
+                    "light": "{0} Lux".format(int.from_bytes(light, "big"))
                 }
-                
+
                 sensorJSON = json.dumps(sensorTag)
                 print("-----------------------------------------")
                 print(sensorJSON)

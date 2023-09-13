@@ -1,9 +1,11 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, redirect, url_for
 from astrapy.rest import create_client, http_methods
 from threading import Thread
+import threading
 import time
 import uuid
 import os
+import subprocess
 
 """
 Run Following in Terminal (Replace Information):
@@ -34,9 +36,26 @@ def poll_cassandra():
         responseDict = response.get("data")
         time.sleep(5)  
 
+sensor_processes = []
+
+def run_virtual_sensor():
+    try:
+        process = subprocess.Popen(['python', 'simulator.py'])
+        print('Virtual sensor started successfully')
+
+        sensor_processes.append(process)
+    except Exception as e:
+        print(f'Error starting virtual sensor: {str(e)}')
+
 @app.route('/')
 def index():
     return render_template('index.html', response=responseDict)
+
+@app.route('/add_sensor', methods=['POST'])
+def add_sensor():
+    sensor_thread = threading.Thread(target=run_virtual_sensor)
+    sensor_thread.start()
+    return redirect(url_for('index'))
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
